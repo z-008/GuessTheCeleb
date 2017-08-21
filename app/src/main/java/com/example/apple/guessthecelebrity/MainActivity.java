@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -29,7 +30,11 @@ public class MainActivity extends AppCompatActivity {
     int chosenCeleb = 0;
     ImageView imageView;
     int locationOfCorrectAnswer;
-    int[] answers = new int[4];
+    String[] answers = new String[4];
+    Button button0;
+    Button button1;
+    Button button2;
+    Button button3;
 
 
     public class ImageDownloader extends AsyncTask<String,Void,Bitmap>
@@ -101,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageView = (ImageView)findViewById(R.id.imageView);
+        button0 = (Button)findViewById(R.id.button);
+        button1 = (Button)findViewById(R.id.button2);
+        button2 = (Button)findViewById(R.id.button3);
+        button3 = (Button)findViewById(R.id.button4);
 
         DownlodTask task = new DownlodTask();
         String result = null;
@@ -112,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             //<div class="sidebarContainer">
 
             String[] splitResult = result.split("<div class=\"sidebarContainer\">");
-            Pattern p = Pattern.compile("src=\"(.*?)\"");
+            Pattern p = Pattern.compile("img src=\"(.*?)\"");
             Matcher m = p.matcher(splitResult[0]);
             while(m.find())
             {
@@ -132,6 +141,33 @@ public class MainActivity extends AppCompatActivity {
             Bitmap celebImage;
             celebImage = imageTask.execute(celebURls.get(chosenCeleb)).get();
             imageView.setImageBitmap(celebImage);
+            locationOfCorrectAnswer = random.nextInt(4);
+
+            int incorrectAnswersLocation;
+
+            for(int i=0;i<4;i++)
+            {
+
+                if(i==locationOfCorrectAnswer)
+                {
+                    answers[i] = celebNames.get(chosenCeleb);
+                }
+                else
+                {
+                    incorrectAnswersLocation = random.nextInt(celebURls.size());
+
+                    while(incorrectAnswersLocation==chosenCeleb) {
+                        incorrectAnswersLocation = random.nextInt(celebURls.size());
+                    }
+
+                    answers[i] = celebNames.get(incorrectAnswersLocation);
+
+                }
+            }
+            button0.setText(answers[0]);
+            button1.setText(answers[1]);
+            button2.setText(answers[2]);
+            button3.setText(answers[3]);
 
 
 
