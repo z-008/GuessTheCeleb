@@ -6,8 +6,10 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,6 +102,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void celebChosen(View view)
+    {
+        if(view.getTag().toString().equals(Integer.toString(locationOfCorrectAnswer)))
+        {
+            Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Wrong! It was "+ celebNames.get(chosenCeleb), Toast.LENGTH_SHORT).show();
+        }
+
+        generateNewQuestion();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,10 +150,35 @@ public class MainActivity extends AppCompatActivity {
                 celebNames.add(m.group(1));
             }
 
-            Random random = new Random();
-            chosenCeleb = random.nextInt(celebURls.size());
-            ImageDownloader imageTask = new ImageDownloader();
-            Bitmap celebImage;
+
+
+
+        }
+
+        catch(InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        catch(ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+
+        generateNewQuestion();
+        //Log.i("Contents of Url: ",result);
+
+
+    }
+
+
+    public void generateNewQuestion()
+    {
+        Random random = new Random();
+        chosenCeleb = random.nextInt(celebURls.size());
+        ImageDownloader imageTask = new ImageDownloader();
+        Bitmap celebImage;
+        try {
+
             celebImage = imageTask.execute(celebURls.get(chosenCeleb)).get();
             imageView.setImageBitmap(celebImage);
             locationOfCorrectAnswer = random.nextInt(4);
@@ -170,20 +210,13 @@ public class MainActivity extends AppCompatActivity {
             button3.setText(answers[3]);
 
 
+        } catch (Exception e) {
 
-        }
-
-        catch(InterruptedException e)
-        {
             e.printStackTrace();
-        }
-        catch(ExecutionException e)
-        {
-            e.printStackTrace();
-        }
 
-        //Log.i("Contents of Url: ",result);
-
+        }
 
     }
+
 }
+
